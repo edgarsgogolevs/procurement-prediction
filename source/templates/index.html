@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iepirkumu Meklēšana</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        .marquee-container {
+            width: 100%;
+            overflow: hidden;
+            background-color: #343a40;
+            color: white;
+            padding: 10px 0;
+        }
+        .marquee {
+            display: inline-block;
+            white-space: nowrap;
+            font-size: 24px;
+            animation: marquee 10s linear infinite;
+        }
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        .search-container {
+            margin-top: 50px;
+        }
+        .search-container input[type="text"] {
+            width: 50%;
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            outline: none;
+        }
+        .search-container input[type="text"]:focus {
+            border-color: #888;
+        }
+        .search-container button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            color: white;
+            background-color: #343a40;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .search-container button:hover {
+            background-color: #23272b;
+            transform: translateY(-2px);
+        }
+        .table-container {
+            margin: 50px auto;
+            width: 80%;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 50px;
+            font-size: 18px;
+        }
+        .pagination button, .pagination span {
+            padding: 10px 15px;
+            margin: 0 5px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            background-color: transparent;
+            color: #343a40;
+            box-shadow: none;
+            transition: color 0.3s, transform 0.3s;
+        }
+        .pagination button:hover, .pagination span:hover {
+            color: #23272b;
+            transform: translateY(-2px);
+        }
+        .pagination .active {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="marquee-container">
+    <div class="marquee">EIS iepirkumu geeks</div>
+</div>
+
+<div class="search-container">
+    <form action="/">
+        <input value="{{ regNo }}" type="text" id="regNo" name="regNo" placeholder="Ievadiet uzņēmuma reģistrācijas numuru vai personas nodokļu maksātāja numuru...">
+        <button>Meklēt</button>
+    </form>
+</div>
+
+{% if recommendations is defined and recommendations|length > 0 %}
+<div class="table-container">
+    <table id="results-table">
+        <thead>
+            <tr>
+                <th>Identifikācijas numurs</th>
+                <th>Nosaukums</th>
+                <th>CPV</th>
+                <th>Izsludināšanas datums</th>
+                <th>Iesniegšanas termiņš</th>
+                <th>Apskatīt iepirkumu</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for rec in recommendations %}
+            <tr>            
+                <td>{{ rec.Iepirkuma_identifikacijas_numurs }}</td>
+                <td>{{ rec.Iepirkuma_nosaukums }}</td>
+                <td>{{ rec.CPV_kods_galvenais_prieksmets }}</td>
+                <td>{{ rec.Iepirkuma_izsludinasanas_datums }}</td>
+                <td>{{ rec.Piedavajumu_iesniegsanas_datums }}</td>
+                <td>
+                    <a href="{{rec.Hipersaite_EIS_kura_pieejams_zinojums}}" target="_blank">EIS</a>
+                    {% if rec.Hipersaite_uz_IUB_publikaciju is defined and rec.Hipersaite_uz_IUB_publikaciju|length > 0 %}
+                    <a href="{{rec.Hipersaite_uz_IUB_publikaciju}}" target="_blank">IUB</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% elif showError is defined and showError == True%}
+<h1 style="color: red;">Neviens uzņēmums netika atrasts</h1>
+{% endif %}
+</body>
+</html>

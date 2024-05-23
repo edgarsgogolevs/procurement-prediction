@@ -3,5 +3,6 @@ env/
 .DS_Store
 .mypy_cache/
 .idea/
-tmp/*
-!tmp/.gitkeep
+source/tmp/*
+!source/tmp/.gitkeep
+__pycache__/
